@@ -229,14 +229,14 @@ static bool notificationsEnabled()
 
 // ADS1299 互換の電極設定
 const ElectrodeConfig defaultElectrodes[CH_MAX] = {
-    {"CH1", 0, 0},
-    {"CH2", 0, 0},
-    {"CH3", 0, 0},
-    {"CH4", 0, 0},
-    {"CH5", 0, 0},
-    {"CH6", 0, 0},
-    {"CH7", 0, 0},
-    {"CH8", 0, 0}};
+    {"FP1", 0, 0},
+    {"FP2", 0, 0},
+    {"C3", 0, 0},
+    {"C4", 0, 0},
+    {"P3", 0, 0},
+    {"P4", 0, 0},
+    {"O1", 0, 0},
+    {"O2", 0, 0}};
 
 // ========= BLE コールバック (ADS1299 実装と同一) =========
 class ServerCallbacks : public BLEServerCallbacks
