@@ -99,13 +99,16 @@ volatile int sampleBufferIndex = 0;
 uint16_t sampleIndexCounter = 0;
 
 // ========= P300 波形再生用の状態 =========
-constexpr float MICROVOLT_PER_COUNT = 0.022f; // ADS1299 (Gain=24, Vref=4.5V) に近い LSB 換算値
+constexpr float ADS1299_VREF = 4.5f;
+constexpr float ADS1299_GAIN = 24.0f;
+constexpr float ADC_MAX_COUNTS = 32768.0f;                                                     // using 16-bit signed dummy output
+constexpr float MICROVOLT_PER_COUNT = (ADS1299_VREF / ADS1299_GAIN) / ADC_MAX_COUNTS * 1.0e6f; // ≈5.72µV
 constexpr float MICROVOLT_TO_COUNT = 1.0f / MICROVOLT_PER_COUNT;
 constexpr size_t TRIGGER_PULSE_WIDTH_SAMPLES = 6; // ≒24ms
 constexpr float BACKGROUND_NOISE_UV = 1.2f;
 constexpr float TARGET_EVENT_SCALE = 1.0f;
-constexpr float NONTARGET_EVENT_SCALE = 0.35f;
-constexpr float DEFAULT_EVENT_SCALE = 0.25f;
+constexpr float NONTARGET_EVENT_SCALE = 0.10f;
+constexpr float DEFAULT_EVENT_SCALE = 0.05f;
 constexpr float CHANNEL_GAIN[CH_MAX] = {1.0f, 0.65f, 0.55f, 0.5f, 0.45f, 0.4f, 0.35f, 0.3f};
 constexpr float CHANNEL_PHASE[CH_MAX] = {0.0f, 0.7f, 1.4f, 2.1f, 0.5f, 1.2f, 1.9f, 2.6f};
 constexpr float ALPHA_FREQ_HZ = 10.0f;
@@ -138,7 +141,7 @@ static int16_t microvoltToCounts(float microvolt)
 {
     const float raw = microvolt * MICROVOLT_TO_COUNT;
     const float clamped = std::max(-32768.0f, std::min(32767.0f, raw));
-    return static_cast<int16_t>(clamped);
+    return static_cast<int16_t>(::lrintf(clamped));
 }
 
 static float eventAmplitudeScale(uint8_t triggerValue)
